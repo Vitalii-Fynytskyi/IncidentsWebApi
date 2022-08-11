@@ -22,14 +22,14 @@ namespace IncidentsWebApi.Controllers
             return Ok(incidentsDTO);
         }
         // GET: api/Incidents/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IncidentDTO>> GetIncident(int id)
+        [HttpGet("{incidentName}")]
+        public async Task<ActionResult<IncidentDTO>> GetIncident(string incidentName)
         {
-            Incident? incident = await _context.Incidents.FindAsync(id);
+            Incident? incident = await _context.Incidents.FindAsync(Guid.Parse(incidentName));
 
             if (incident == null)
             {
-                return NotFound(new { errorMessage = $"Can't find incident with id = {id}" });
+                return NotFound(new { errorMessage = $"Can't find incident with name = {incidentName}" });
             }
 
             return new IncidentDTO(incident);
@@ -52,7 +52,7 @@ namespace IncidentsWebApi.Controllers
             Incident incidentFromDTO = new Incident(incident);
             incidentFromDTO.Accounts.Add(initialAccount);
             _context.Incidents.Add(incidentFromDTO);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             incident.IncidentName = incidentFromDTO.IncidentName.ToString();
             return Ok(incident);
         }
@@ -64,7 +64,7 @@ namespace IncidentsWebApi.Controllers
             if (account == null) { return NotFound(new { errorText = $"Account \'{incidentCreateRequest.AccountName}\' does not exist" }); }
 
             //find contact
-            Contact? contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Email == incidentCreateRequest.Email);
+            Contact? contact = _context.Contacts.FirstOrDefault(c => c.Email == incidentCreateRequest.Email);
             if(contact != null) //update contact data
             {
                 contact.FirstName = incidentCreateRequest.FirstName;
@@ -94,11 +94,11 @@ namespace IncidentsWebApi.Controllers
                 newIncident.Description = incidentCreateRequest.IncidentDescription;
                 newIncident.Accounts.Add(account);
                 _context.Incidents.Add(newIncident);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
                 return Ok(new IncidentDTO(newIncident));
 
             }
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return Ok(new IncidentDTO(incident));
 
         }
@@ -111,7 +111,7 @@ namespace IncidentsWebApi.Controllers
                 return NotFound(new { errorMessage = $"Can't find incident with incidentName = {incidentName}" });
             }
             _context.Incidents.Remove(incident);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return NoContent();
         }
     }

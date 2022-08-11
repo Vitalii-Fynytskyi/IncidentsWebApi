@@ -63,7 +63,7 @@ namespace IncidentsWebApi.Controllers
                     return BadRequest(new { errorMessage = $"Account name '{account.Name}' is busy by another user" });
                 }
             }
-            Contact? initialContact = await _context.Contacts.FindAsync(initialContactId);
+            Contact? initialContact = _context.Contacts.Find(initialContactId);
             if(initialContact == null) { return NotFound(new { errorMessage = $"Contact with id =  '{initialContactId}' does not exist" }); }
             Account accountFromDTO = new Account(account);
             accountFromDTO.Contacts.Add(initialContact);

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IncidentsWebApi.Model;
 
@@ -56,7 +51,7 @@ namespace IncidentsWebApi.Controllers
             }
             Contact contactFromDTO = new Contact(contact);
             _context.Contacts.Update(contactFromDTO);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return NoContent();
         }
 
@@ -74,7 +69,7 @@ namespace IncidentsWebApi.Controllers
             }
             Contact contactFromDTO = new Contact(contact);
             _context.Contacts.Add(contactFromDTO);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             contact.Id = contactFromDTO.Id;
             return Ok(contact);
         }
@@ -89,7 +84,7 @@ namespace IncidentsWebApi.Controllers
                 return NotFound(new {errorMessage=$"Can't find contact with id = {id}" });
             }
             _context.Contacts.Remove(contact);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return NoContent();
         }
     }
